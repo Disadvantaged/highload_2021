@@ -21,12 +21,12 @@ local config = get_config(config_filename)
 if config == nil then
     return
 end
-print(config.proxy.bypass.host)
 
 local function handler(req)
     local client = require('http.client').new()
 
     local url = config.proxy.bypass.host .. ':' .. config.proxy.bypass.port .. req:path() .. '?' .. req:query()
+
     return client:request(req:method(), url, req.body, {timeout = 10, req:headers()})
 end
 
@@ -34,8 +34,8 @@ local server = require('http.server').new('localhost', config.proxy.port)
 
 
 local router = require('http.router').new()
-router:route({path = '/.*'}, handler)
 router:route({path = '/' }, handler)
+router:route({path = '/.*'}, handler)
 
 server:set_router(router)
 server:start()
